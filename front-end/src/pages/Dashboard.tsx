@@ -6,15 +6,15 @@ import PopularProducts from "../components/PopularProducts";
 
 export default function Dashboard() {
   return (
-    <div className="flex flex-col gap-4">
-      <DashboardStatsGrid />
-      <div className="flex flex-row gap-4 w-full">
-        <TransactionChart />
-        <BuyerProfilePieChart />
+    <div className="flex flex-col w-fit gap-4">
+      {/* <DashboardStatsGrid /> */}
+      <div className="flex flex-row gap-4 w-[90vw]">
+        {/* <TransactionChart /> */}
+        {/* <BuyerProfilePieChart /> */}
       </div>
-      <div className="flex flex-row gap-4 w-full">
-        <RecentOrders />
-        <PopularProducts />
+      <div className="flex flex-col gap-4 w-full">
+        {/* <RecentOrders /> */}
+        {/* <PopularProducts /> */}
       </div>
     </div>
   );
