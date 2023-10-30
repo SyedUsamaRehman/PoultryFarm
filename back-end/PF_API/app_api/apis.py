@@ -10,7 +10,7 @@ class CustomUserSerializer(serializers.HyperlinkedModelSerializer):
 
       class Meta:
         model=CustomUser
-        fields='__all__'
+        fields='name','email','password','user_type','permission'
 class departmentSerializer(serializers.HyperlinkedModelSerializer):
       class Meta:
         model=department
