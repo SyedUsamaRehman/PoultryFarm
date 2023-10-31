@@ -1,142 +1,96 @@
 import React from "react";
 import ListsTable from "../components/tables/ListsTable";
-import { UsersColumns, users } from "../lists/Lists";
+import {
+  UsersColumns,
+  users as initialUsers,
+  inputFields,
+  selectInputFields,
+} from "../lists/Lists";
 import FormModel from "../model/FormModel";
-import { InputField } from "../types/types";
 import { useFormik } from "formik";
-
-const inputFields: InputField[] = [
-  {
-    name: "name",
-    type: "text",
-    label: "Name",
-    placeholder: "Enter your name",
-  },
-  {
-    name: "email",
-    type: "email",
-    label: "Email",
-    placeholder: "Enter your email",
-  },
-  {
-    name: "password",
-    type: "password",
-    label: "Password",
-    placeholder: "Enter your password",
-  },
-];
-
-const userFormColumns: any = [
-  {
-    name: "name",
-    type: "text",
-    label: "Name",
-  },
-  {
-    name: "email",
-    type: "email",
-    label: "Email",
-  },
-  {
-    name: "password",
-    type: "password",
-    label: "Password",
-  },
-];
-
-const options = [
-  { value: "option1", label: "Option 1" },
-  { value: "option2", label: "Option 2" },
-  { value: "option3", label: "Option 3" },
-];
 
 const Users = () => {
   const [open, setOpen] = React.useState(false);
-  const [selectedOption, setSelectedOption] = React.useState("");
-
-  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
-    setSelectedOption(event.target.value);
-  };
-
-  // const formik = useFormik({
-  //   initialValues: users,
-  //   onSubmit: (values: any) => {
-  //     values.id = users.length + 1;
-  //     users.push(values);
-  //     console.log(users);
-  //     formik.resetForm();
-  //     setOpen(false);
-  //   },
-  // });
+  const [editingUser, setEditingUser] = React.useState<any>(null);
+  const [users, setUsers] = React.useState(initialUsers);
 
   const formik = useFormik({
     initialValues: {
-      name: "",
-      email: "",
-      password: "",
+      id: editingUser ? editingUser.id : "",
+      name: editingUser ? editingUser.name : "",
+      email: editingUser ? editingUser.email : "",
+      password: editingUser ? editingUser.password : "",
+      selectedOption1: editingUser ? editingUser.type : "",
     },
     onSubmit: (values: any) => {
-      values.id = users.length + 1;
-      users.push(values);
+      if (editingUser) {
+        setUsers((prevUsers) => {
+          const newUsers = [...prevUsers];
+          const index = newUsers.findIndex(
+            (user: any) => user.id === editingUser.id
+          );
+          newUsers[index] = { ...editingUser, ...values };
+          return newUsers;
+        });
+      } else {
+        values.id = users.length + 1;
+        values.type = values.selectedOption1;
+        setUsers((prevUsers) => [...prevUsers, values]);
+      }
       console.log(values);
       formik.resetForm();
       setOpen(false);
-      // Log the input values
-      const { name, email, password } = values;
+      setEditingUser(null);
+      const { name, email, password, selectedOption1, id } = values;
+      console.log("id", id);
       console.log("Name:", name);
       console.log("Email:", email);
       console.log("Password:", password);
-
-      // Log the selected option
-      console.log("Selected Option:", selectedOption);
+      console.log("Selected Option:", selectedOption1);
     },
   });
+
+  React.useEffect(() => {
+    if (editingUser) {
+      formik.resetForm({
+        values: {
+          id: editingUser.id,
+          name: editingUser.name,
+          email: editingUser.email,
+          password: editingUser.password,
+          selectedOption1: editingUser.type,
+        },
+      });
+    } else {
+      formik.resetForm();
+    }
+  }, [editingUser]);
+
+  const handleEditButtonClick = (user: any) => {
+    console.log("Editing User", user);
+    setEditingUser(user);
+    setOpen(true);
+  };
 
   return (
     <div>
       <div className="">
         <ListsTable
           AddButton={() => setOpen(true)}
+          EditButton={handleEditButtonClick}
+          DeleteButton={(user: any) =>
+            setUsers((prevUsers) =>
+              prevUsers.filter((prevUser) => prevUser.id !== user.id)
+            )
+          }
           list={users}
           listLabel="Users Data"
           columns={UsersColumns}
         />
-        {/* <FormModel
-          open={open}
-          setOpen={!open}
-          title="User"
-          user={userFormColumns}
-          inputFields={inputFields}
-          // onSubmit={formik.handleSubmit}
-          inputValue={formik.values[field.name]}
-          inputOnChange={formik.handleChange}
-          inputOnBlur={formik.handleBlur}
-          selectValue={selectedOption}
-          selectOnChange={handleSelectChange}
-          formOnSubmit={formik.handleSubmit}
-          options={options}
-        /> */}
-        {/* <FormModel
-          open={open}
-          setOpen={setOpen}
-          title="User"
-          user={userFormColumns}
-          inputFields={inputFields.map((field) => ({
-            ...field,
-            inputValue: formik.values[field.name],
-            inputOnChange: formik.handleChange,
-            inputOnBlur: formik.handleBlur,
-          }))}
-          selectValue={selectedOption}
-          selectOnChange={handleSelectChange}
-          formOnSubmit={formik.handleSubmit}
-          options={options}
-        /> */}
         <FormModel
           open={open}
           setOpen={setOpen}
-          title="User"
-          user={userFormColumns}
+          title={editingUser ? "Updated User" : "Add User"}
           inputFields={inputFields.map((field) => ({
             ...field,
             inputValue: formik.values[field.name],
@@ -144,10 +98,18 @@ const Users = () => {
               formik.setFieldValue(field.name, event.target.value),
             inputOnBlur: () => formik.setFieldTouched(field.name),
           }))}
-          selectValue={selectedOption}
-          selectOnChange={handleSelectChange}
           formOnSubmit={formik.handleSubmit}
-          options={options}
+          selectInputFields={selectInputFields.map(
+            (field: any, index: number) => ({
+              ...field,
+              options: selectInputFields[index].options,
+              selectValue: formik.values[field.name],
+              selectOnChange: (event: any) => {
+                formik.setFieldValue(field.name, event.target.value),
+                  console.log("New value:", event.target.value);
+              },
+            })
+          )}
         />
       </div>
     </div>

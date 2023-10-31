@@ -6,6 +6,8 @@ const ListsTable: React.FC<TableProps> = ({
   listLabel,
   columns,
   AddButton,
+  EditButton,
+  DeleteButton,
 }) => {
   return (
     <div className="flex flex-col h-full w-[85vw] mx-auto">
@@ -46,10 +48,16 @@ const ListsTable: React.FC<TableProps> = ({
                 </td>
               ))}
               <td className="px-1 py-1 lg:px-4 lg:py-2 text-left">
-                <button className="bg-blue-500 rounded-md lg:rounded-lg p-1 lg:p-2 text-sm lg:text-lg font-semibold text-white flex justify-center items-center gap-x-1 w-full">
+                <button
+                  onClick={() => EditButton(user)}
+                  className="bg-blue-500 rounded-md lg:rounded-lg p-1 lg:p-2 text-sm lg:text-lg font-semibold text-white flex justify-center items-center gap-x-1 w-full"
+                >
                   <i className="fa fa-edit"></i> Edit
                 </button>
-                <button className="bg-red-500 rounded-md lg:rounded-lg p-1 lg:p-2 text-sm lg:text-lg font-semibold text-white flex justify-center items-center gap-x-1 w-full mt-1">
+                <button
+                  onClick={() => DeleteButton(user)}
+                  className="bg-red-500 rounded-md lg:rounded-lg p-1 lg:p-2 text-sm lg:text-lg font-semibold text-white flex justify-center items-center gap-x-1 w-full mt-1"
+                >
                   <i className="fa fa-trash"></i> Delete
                 </button>
               </td>

@@ -7,15 +7,8 @@ const FormModel = ({
   open,
   setOpen,
   title,
-  // user,
   inputFields,
-  options,
-  // onSubmit,
-  // inputValue,
-  // inputOnChange,
-  // inputOnBlur,
-  selectValue,
-  selectOnChange,
+  selectInputFields,
   formOnSubmit,
 }: FormModelProps) => {
   const cancelButtonRef = useRef(null);
@@ -63,42 +56,32 @@ const FormModel = ({
                           Add New {title}
                         </Dialog.Title>
                         <div className="mt-2 grid grid-cols-1 gap-4 mx-20">
-                          {/* {inputFields.map((field) => (
-                            <Input
-                              key={field.name}
-                              type={field.type}
-                              name={field.name}
-                              id={field.name}
-                              value={inputValue}
-                              onChange={inputOnChange}
-                              onBlur={inputOnBlur}
-                              placeholder={field.placeholder}
-                              required
-                              label
-                              labelText={field.label}
-                            />
-                          ))} */}
-                          {inputFields.map((field) => (
-                            <Input
-                              key={field.name}
-                              type={field.type}
-                              name={field.name}
-                              id={field.name}
-                              value={field.inputValue}
-                              onChange={field.inputOnChange}
-                              onBlur={field.inputOnBlur}
-                              placeholder={field.placeholder}
-                              required
-                              label
-                              labelText={field.label}
-                            />
-                          ))}
-                          <Select
-                            name="mySelect"
-                            options={options}
-                            value={selectValue}
-                            onChange={selectOnChange}
-                          />
+                          {inputFields &&
+                            inputFields.map((field) => (
+                              <Input
+                                key={field.name}
+                                type={field.type}
+                                name={field.name}
+                                id={field.name}
+                                value={field.inputValue}
+                                onChange={field.inputOnChange}
+                                onBlur={field.inputOnBlur}
+                                placeholder={field.placeholder}
+                                required
+                                label
+                                labelText={field.label}
+                              />
+                            ))}
+                          {selectInputFields &&
+                            selectInputFields.map((field: any) => (
+                              <Select
+                                key={field.name}
+                                name="mySelect"
+                                options={field.options}
+                                value={field.selectValue}
+                                onChange={field.selectOnChange}
+                              />
+                            ))}
                         </div>
                       </div>
                     </div>
