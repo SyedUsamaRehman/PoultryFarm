@@ -13,6 +13,9 @@ const Users = () => {
   const [open, setOpen] = React.useState(false);
   const [editingUser, setEditingUser] = React.useState<any>(null);
   const [users, setUsers] = React.useState(initialUsers);
+  const [DeletingUserMessage, setDeletingUserMessage] = React.useState<any>("");
+  const [DeletingUser, setDeletingUser] = React.useState<any>(null);
+  const [titleButton, setTitleButton] = React.useState<any>("Add New User");
 
   const formik = useFormik({
     initialValues: {
@@ -23,7 +26,11 @@ const Users = () => {
       selectedOption1: editingUser ? editingUser.type : "",
     },
     onSubmit: (values: any) => {
-      if (editingUser) {
+      if (DeletingUserMessage) {
+        setUsers((prevUsers) =>
+          prevUsers.filter((prevUser) => prevUser.id !== DeletingUser.id)
+        );
+      } else if (editingUser) {
         setUsers((prevUsers) => {
           const newUsers = [...prevUsers];
           const index = newUsers.findIndex(
@@ -68,7 +75,17 @@ const Users = () => {
 
   const handleEditButtonClick = (user: any) => {
     console.log("Editing User", user);
+    setTitleButton("Edit User");
     setEditingUser(user);
+    setOpen(true);
+  };
+
+  const handleDeleteButtonClick = (user: any) => {
+    console.log("Deleting User", user);
+    setTitleButton("Confirm Delete User");
+    setEditingUser(null);
+    setDeletingUser(user);
+    setDeletingUserMessage("Are you sure you want to delete this user?");
     setOpen(true);
   };
 
@@ -78,11 +95,7 @@ const Users = () => {
         <ListsTable
           AddButton={() => setOpen(true)}
           EditButton={handleEditButtonClick}
-          DeleteButton={(user: any) =>
-            setUsers((prevUsers) =>
-              prevUsers.filter((prevUser) => prevUser.id !== user.id)
-            )
-          }
+          DeleteButton={handleDeleteButtonClick}
           list={users}
           listLabel="Users Data"
           columns={UsersColumns}
@@ -90,26 +103,36 @@ const Users = () => {
         <FormModel
           open={open}
           setOpen={setOpen}
-          title={editingUser ? "Updated User" : "Add User"}
-          inputFields={inputFields.map((field) => ({
-            ...field,
-            inputValue: formik.values[field.name],
-            inputOnChange: (event) =>
-              formik.setFieldValue(field.name, event.target.value),
-            inputOnBlur: () => formik.setFieldTouched(field.name),
-          }))}
+          title={titleButton}
+          DeleteUserMessage={DeletingUserMessage}
+          inputFields={
+            !DeletingUserMessage &&
+            inputFields.map((field) => ({
+              ...field,
+              inputValue: formik.values[field.name],
+              inputOnChange: (event: any) =>
+                formik.setFieldValue(field.name, event.target.value),
+              inputOnBlur: () => formik.setFieldTouched(field.name),
+            }))
+          }
           formOnSubmit={formik.handleSubmit}
-          selectInputFields={selectInputFields.map(
-            (field: any, index: number) => ({
+          selectInputFields={
+            !DeletingUserMessage &&
+            selectInputFields.map((field: any, index: number) => ({
               ...field,
               options: selectInputFields[index].options,
               selectValue: formik.values[field.name],
               selectOnChange: (event: any) => {
                 formik.setFieldValue(field.name, event.target.value),
                   console.log("New value:", event.target.value);
+                console.log("selectValue:", formik.values[field.name]);
+                console.log(
+                  "formik.setFieldValue:",
+                  formik.setFieldValue(field.name, event.target.value)
+                );
               },
-            })
-          )}
+            }))
+          }
         />
       </div>
     </div>

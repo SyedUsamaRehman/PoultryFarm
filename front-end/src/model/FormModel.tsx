@@ -2,6 +2,7 @@ import { Fragment, useRef } from "react";
 import { Dialog, Transition } from "@headlessui/react";
 import { Input, Select } from "../components/forms";
 import { FormModelProps } from "../types/types";
+import { ExclamationTriangleIcon } from "@heroicons/react/24/outline";
 
 const FormModel = ({
   open,
@@ -10,6 +11,7 @@ const FormModel = ({
   inputFields,
   selectInputFields,
   formOnSubmit,
+  DeleteUserMessage,
 }: FormModelProps) => {
   const cancelButtonRef = useRef(null);
 
@@ -48,16 +50,29 @@ const FormModel = ({
                 <form onSubmit={formOnSubmit}>
                   <div className="bg-gray-50 px-4 pb-4 pt-5 sm:p-6 sm:pb-4">
                     <div className="sm:flex sm:items-start">
+                      {DeleteUserMessage && (
+                        <div className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
+                          <ExclamationTriangleIcon
+                            className="h-6 w-6 text-red-600"
+                            aria-hidden="true"
+                          />
+                        </div>
+                      )}
                       <div className="mt-3 text-center sm:ml-4 sm:mt-0 sm:text-left">
                         <Dialog.Title
                           as="h3"
                           className="text-2xl font-bold leading-6 text-gray-900"
                         >
-                          Add New {title}
+                          {title}
                         </Dialog.Title>
                         <div className="mt-2 grid grid-cols-1 gap-4 mx-20">
+                          {DeleteUserMessage && (
+                            <p className="text-sm text-gray-500">
+                              {DeleteUserMessage}
+                            </p>
+                          )}
                           {inputFields &&
-                            inputFields.map((field) => (
+                            inputFields.map((field: any) => (
                               <Input
                                 key={field.name}
                                 type={field.type}
@@ -91,7 +106,7 @@ const FormModel = ({
                       type="submit"
                       className="inline-flex w-full justify-center rounded-md bg-green-600 p-3 text-lg font-semibold text-white shadow-sm hover:bg-green-500 sm:ml-3 sm:w-auto"
                     >
-                      Save {title}
+                      {title}
                     </button>
                     <button
                       type="button"

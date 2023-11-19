@@ -42,10 +42,11 @@ interface SelectInputField {
 interface FormModelProps {
   open: boolean;
   setOpen: any;
-  title: string;
-  inputFields: InputField[];
-  selectInputFields: SelectInputField[];
+  title: any;
+  inputFields: InputField[] | any;
+  selectInputFields: SelectInputField[] | any;
   formOnSubmit: (e: React.FormEvent<HTMLFormElement>) => void;
+  DeleteUserMessage?: String;
 }
 
 import React, { InputHTMLAttributes } from "react";
